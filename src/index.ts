@@ -1,15 +1,16 @@
-import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
-import "reflect-metadata";
-import express from "express";
-import { buildSchema } from "type-graphql";
-import { ApolloServer } from "apollo-server-express";
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import 'reflect-metadata';
+import express from 'express';
+import { buildSchema } from 'type-graphql';
+import { ApolloServer } from 'apollo-server-express';
+import config from 'config'
 import {
   ApolloServerPluginLandingPageProductionDefault,
   ApolloServerPluginLandingPageGraphQLPlayground,
-} from "apollo-server-core";
-import { resolvers } from "./users/resolvers";
-import { connectToMongo } from "./utils/mongo";
+} from 'apollo-server-core';
+import { resolvers } from './users/resolvers';
+import { connectToMongo } from './utils/mongo';
 dotenv.config();
 
 const bootstrap = async () => {
@@ -28,7 +29,7 @@ const bootstrap = async () => {
     schema,
     context: (ctx) => ctx,
     plugins: [
-      process.env.NODE_ENV === "production"
+      process.env.NODE_ENV === 'production'
         ? ApolloServerPluginLandingPageProductionDefault()
         : ApolloServerPluginLandingPageGraphQLPlayground(),
     ],
@@ -39,9 +40,11 @@ const bootstrap = async () => {
   server.applyMiddleware({ app });
 
   app.listen({ port: 5000 }, () => {
-    console.log("app startedon http://localhost:5000");
+    console.log('app started on http://localhost:5000');
   });
   connectToMongo();
 };
 
 bootstrap();
+
+

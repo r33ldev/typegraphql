@@ -1,0 +1,9 @@
+{
+  "name": "typegraphql-refresher",
+  "version": "1.0.0",
+  "description": "refresher",
+  "main": "index.js",
+  "repository": "https://github.com/super-devmike/typegraphql.git",
+  "author": "Michael E Adebisi <adebisienads@gmail.com>",
+  "license": "MIT"
+}

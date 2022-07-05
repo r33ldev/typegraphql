@@ -14,13 +14,14 @@ import { connectToMongo } from './utils/mongo';
 import { Context } from './types/context';
 import { verifyJWT } from './utils/jwt';
 import { User } from './users/schema/user.schema';
+import authChecker from './utils/authChecker';
 dotenv.config();
 
 const bootstrap = async () => {
   //build schema
   const schema = await buildSchema({
     resolvers,
-    // authCheck
+    authChecker
   });
   // init express
   const app = express();
@@ -32,6 +33,7 @@ const bootstrap = async () => {
     schema,
     context: (ctx: Context) => {
       const context = ctx;
+      console.log('cts: ', ctx.req.cookies);
       if (ctx.req.cookies.token) {
         const user = verifyJWT<User>(
           ctx.req.cookies.token,

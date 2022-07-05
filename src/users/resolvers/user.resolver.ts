@@ -18,8 +18,10 @@ export default class UserResolver {
     return this.userService.login(input, ctx);
   }
 
-  @Query(() => User)
-  me(@Ctx() ctx: Context) {
+  @Query(() => User, {nullable: true})
+  async me(@Ctx() ctx: Context) {
+    if (!ctx.user) return null;
     return ctx.user;
   }
+   
 }

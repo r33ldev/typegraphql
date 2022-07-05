@@ -1,6 +1,6 @@
 import { signJWT } from '../../utils/jwt';
 import dotenv from 'dotenv';
-dotenv.config()
+dotenv.config();
 import { ApolloError } from 'apollo-server';
 import { Context } from '../../types/context';
 import {
@@ -20,8 +20,11 @@ class UserService {
     if (!user) throw new ApolloError(err);
     const isValid = await bcrypt.compare(input.password, user.password);
     if (!isValid) throw new ApolloError(err);
-    const token = signJWT(user, Buffer.from(process.env.PRIVATE_KEY as string, 'base64').toString('ascii'));
-    
+    const token = signJWT(
+      user,
+      Buffer.from(process.env.PRIVATE_KEY as string, 'base64').toString('ascii')
+    );
+
     ctx.res.cookie('token', token, {
       httpOnly: true,
       maxAge: 1000 * 60 * 60 * 24 * 7,
@@ -29,7 +32,7 @@ class UserService {
       path: '/',
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
-      });
+    });
     // const token = await ctx.req.user.generateToken();
     return token;
   }

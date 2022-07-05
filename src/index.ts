@@ -4,13 +4,16 @@ import 'reflect-metadata';
 import express from 'express';
 import { buildSchema } from 'type-graphql';
 import { ApolloServer } from 'apollo-server-express';
-import config from 'config'
+
 import {
   ApolloServerPluginLandingPageProductionDefault,
   ApolloServerPluginLandingPageGraphQLPlayground,
 } from 'apollo-server-core';
 import { resolvers } from './users/resolvers';
 import { connectToMongo } from './utils/mongo';
+import { Context } from './types/context';
+import { verifyJWT } from './utils/jwt';
+import { User } from './users/schema/user.schema';
 dotenv.config();
 
 const bootstrap = async () => {
@@ -27,7 +30,19 @@ const bootstrap = async () => {
   // create apollo server
   const server = new ApolloServer({
     schema,
-    context: (ctx) => ctx,
+    context: (ctx: Context) => {
+      const context = ctx;
+      if (ctx.req.cookies.token) {
+        const user = verifyJWT<User>(
+          ctx.req.cookies.token,
+          Buffer.from(process.env.PUBLIC_KEY as string, 'base64').toString(
+            'ascii'
+          )
+        );
+        if (user) context.user = user;
+      }
+      return context;
+    },
     plugins: [
       process.env.NODE_ENV === 'production'
         ? ApolloServerPluginLandingPageProductionDefault()
@@ -46,5 +61,3 @@ const bootstrap = async () => {
 };
 
 bootstrap();
-
-
